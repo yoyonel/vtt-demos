@@ -9,6 +9,7 @@ from flask_socketio import SocketIO, emit, join_room, leave_room, \
 # the best option based on installed packages.
 async_mode = None
 
+# https://stackoverflow.com/questions/20646822/how-to-serve-static-files-in-flask
 app = Flask(__name__, static_url_path='/static')
 app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app, async_mode=async_mode)

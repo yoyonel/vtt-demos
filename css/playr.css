@@ -6,6 +6,16 @@
  * http://www.delphiki.com/html5/playr
  */
 
+/* https://stackoverflow.com/questions/30246138/how-to-change-video-subtitles-font-size-in-html5 */
+video::-webkit-media-text-track-display {
+  font-size: 250%;
+}
+
+::cue(v[voice='Test']) {
+   color:#fff;
+   background:#dd0029;
+}
+
 .playr_wrapper {
     font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif;
     display: inline-block;

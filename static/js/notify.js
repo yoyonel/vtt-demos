@@ -1,3 +1,11 @@
+var g_notify_callback = function () { display("[notify] inside callback"); };
+
+function notify_display(msg) {
+    var p = document.createElement('p');
+    p.innerHTML = msg;
+    document.body.appendChild(p);
+}
+
 (function() {
     var input;
     var lastMod;
@@ -36,13 +44,19 @@
         var file = input.files && input.files[0];
         if (file && lastMod && file.lastModifiedDate.getTime() !== lastMod.getTime()) {
             lastMod = file.lastModifiedDate;
-            display("File changed: " + lastMod);
+            notify_display("File changed: " + lastMod);
+            g_notify_callback();
         }
     }
 
+    // function display(msg) {
+    //     var p = document.createElement('p');
+    //     p.innerHTML = msg;
+    //     document.body.appendChild(p);
+    // }
+
     function display(msg) {
-        var p = document.createElement('p');
-        p.innerHTML = msg;
-        document.body.appendChild(p);
+        notify_display(msg);
     }
+
 })();

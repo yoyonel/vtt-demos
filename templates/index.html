@@ -20,11 +20,15 @@
 <p>Async mode is: <b>{{ async_mode }}</b></p>
 <p>Average ping/pong latency: <b><span id="ping-pong"></span>ms</b></p>
 
-<p>
+<p id="notify">
   <input type='file' id='filename'>
   <input type='button' id='btnStart' value='Start'>
   <script src="/static/js/notify.js"></script>
 </p>
+
+<script>
+  console.log("'g_notify_callback' in window? " + ('g_notify_callback' in window));
+</script>
 
 <video 
   id="myvideo" 
@@ -42,10 +46,10 @@
 <h1>video position: <span id="vid_position"></span></h1>
 </div>
 
-<div id="visualization"></div>
+<!-- <div id="visualization_01"></div>
 <script type="text/javascript">
   // DOM element where the Timeline will be attached
-  var container = document.getElementById('visualization');
+  var container = document.getElementById('visualization_01');
 
   // Create a DataSet (allows two way data-binding)
   var items = new vis.DataSet([
@@ -59,5 +63,99 @@
   // Create a Timeline
   var timeline = new vis.Timeline(container, items, options);
 </script>
+ -->
+<div id="visualization_02"></div>
+<div id="loading">loading...</div>
+
+<script type="text/javascript">
+  var timeline_resource = '/static/resources/data/basic.json';
+  var timeline;
+  var timeline_items;
+  var timeline_options;
+
+  $.ajaxSetup({ cache: false });
+
+  window.g_notify_callback = function() { 
+    notify_display("[timeline] inside callback"); 
+
+    $.ajax({
+      url: timeline_resource,
+      success: function (data) {
+        // // hide the "loading..." message
+        // document.getElementById('loading').style.display = 'none';
+
+        // DOM element where the Timeline will be attached
+        var container = document.getElementById('visualization_02');
+      
+        // Configuration for the Timeline
+        // specify options
+        var options = {
+          showCurrentTime: true
+        };
+
+        // Create a DataSet (allows two way data-binding)
+        var items_newer = new vis.DataSet(data);
+
+        // Set/update items of Timeline (containing in window)
+        window.timeline.setItems(items_newer);
+
+        // // set a custom range from -24 hours to +24 hours current time
+        // var start = new Date((new Date()).getTime() - 24 * 60 * 60 * 1000);
+        // var end   = new Date((new Date()).getTime() + 24 * 60 * 60 * 1000);
+        // timeline.setWindow(start, end, {animation: true});
+      },
+      error: function (err) {
+        console.log('Error', err);
+        if (err.status === 0) {
+          alert('Failed to load data/basic.json.\nPlease run this example on a server.');
+        }
+        else {
+          alert('Failed to load data/basic.json.');
+        }
+      }
+    });
+  }
+
+  // load data via an ajax request. When the data is in, load the timeline
+  $.ajax({
+    url: timeline_resource,
+    success: function (data) {
+      notify_display("[timeline] inside ajax loading"); 
+      // hide the "loading..." message
+      document.getElementById('loading').style.display = 'none';
+
+      // DOM element where the Timeline will be attached
+      var container = document.getElementById('visualization_02');
+
+      // Create a DataSet (allows two way data-binding)
+      timeline_items = new vis.DataSet(data);
+
+      // Configuration for the Timeline
+      // specify options
+      timeline_options = {
+        showCurrentTime: true
+      };
+
+      // Create a Timeline
+      // var timeline = new vis.Timeline(container, items, options);
+      timeline = new vis.Timeline(container, timeline_items, timeline_options);
+      window.timeline = timeline;
+
+      // // set a custom range from -24 hours to +24 hours current time
+      // var start = new Date((new Date()).getTime() - 24 * 60 * 60 * 1000);
+      // var end   = new Date((new Date()).getTime() + 24 * 60 * 60 * 1000);
+      // timeline.setWindow(start, end, {animation: true});
+    },
+    error: function (err) {
+      console.log('Error', err);
+      if (err.status === 0) {
+        alert('Failed to load data/basic.json.\nPlease run this example on a server.');
+      }
+      else {
+        alert('Failed to load data/basic.json.');
+      }
+    }
+  });
+  </script>
 </body>
 </html>
